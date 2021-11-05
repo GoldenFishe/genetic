@@ -1,19 +1,19 @@
-import { IPopulation } from "./Population";
+import { IEnvironment } from "./Environment";
 
 type Size = { width: number; height: number };
 type TargetPoint = { x: number; y: number };
 
 export class Painter {
   private readonly context: CanvasRenderingContext2D;
-  private readonly population: IPopulation;
+  private readonly environment: IEnvironment;
   private readonly size: Size;
   private readonly populationLabel: HTMLElement;
   private readonly generationLabel: HTMLElement;
   private readonly targetPoint: TargetPoint;
 
-  constructor(population: IPopulation, targetPoint: TargetPoint) {
+  constructor(environment: IEnvironment, targetPoint: TargetPoint) {
     this.context = this.getRenderContext("canvas");
-    this.population = population;
+    this.environment = environment;
     this.size = { width: this.context.canvas.width, height: this.context.canvas.height };
     this.populationLabel = document.getElementById("population") as HTMLElement;
     this.generationLabel = document.getElementById("generation") as HTMLElement;
@@ -29,7 +29,7 @@ export class Painter {
       this.drawObjects();
       this.drawLabels();
 
-      this.population.tick();
+      this.environment.nextDay();
 
       this.draw();
     });
@@ -45,17 +45,17 @@ export class Painter {
   }
 
   private drawObjects() {
-    for (let object of this.population.members) {
-      const { x, y } = object.position;
-      const { width, height } = object.size;
-      this.context.fillStyle = object.color;
+    for (let object of this.environment.population.members) {
+      const { x, y } = object.params.position;
+      const { width, height } = object.params.size;
+      this.context.fillStyle = object.params.color;
       this.context.fillRect(x, y, width, height);
     }
   }
 
   private drawLabels() {
-    this.populationLabel.innerText = this.population.members.length.toString();
-    this.generationLabel.innerText = this.population.generation.toString();
+    this.populationLabel.innerText = this.environment.population.members.length.toString();
+    this.generationLabel.innerText = this.environment.population.generation.toString();
   }
 
   private drawTarget() {
