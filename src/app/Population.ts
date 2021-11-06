@@ -1,5 +1,6 @@
 import { IMember, Member } from "./Member";
 import { getRandomInRange } from "./utils";
+import { graphic } from "../index";
 
 type TargetPoint = { x: number; y: number };
 
@@ -34,22 +35,27 @@ export class Population implements IPopulation {
   }
 
   tick(day: number) {
-    this.members.forEach(member => !member.isDead && member.liveDay(day));
+    this.members.forEach(member => !member.isDead && member.liveDay(day, this.targetPoint));
   }
 
   private selection() {
     const matingPool = [];
     for (const member of this.members) {
-      let n = Math.floor(member.fitness(this.targetPoint) * 10000);
+      let n = Math.floor(member.fitness(this.targetPoint) * 1000);
       for (let i = 0; i < n; i++) {
         matingPool.push(member);
       }
     }
+    const maxFitnessValue = Math.max(...this.members.map(member => member.fitnessValue));
+
+    graphic.addPoint(this.generation, Number.parseFloat(maxFitnessValue.toFixed(4)))
+
     return matingPool;
   }
 
   private reproduce() {
     const matingPool = this.selection();
+    console.log(matingPool);
     for (let i = 0; i < this.members.length; i++) {
       const mummyIndex = getRandomInRange(0, matingPool.length);
       const daddyIndex = getRandomInRange(0, matingPool.length);
@@ -59,7 +65,6 @@ export class Population implements IPopulation {
       if (mummy && daddy) {
         let child = mummy.crossover(daddy);
         child.mutate(this.mutationRate);
-        console.log(Math.max(...this.members.map(member => member.fitnessValue)));
         this.members[i] = child;
       }
     }

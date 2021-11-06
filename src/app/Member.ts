@@ -22,7 +22,7 @@ export interface IMember {
 
   mutate(mutationRate: number): void;
 
-  liveDay(day: number): void;
+  liveDay(day: number, targetPoint: Position): void;
 }
 
 export class Member implements IMember {
@@ -68,11 +68,15 @@ export class Member implements IMember {
     }
   }
 
-  liveDay(day: number) {
+  liveDay(day: number, targetPoint: Position) {
     const gene = this.DNA.genes[day];
     if (gene) {
       this.params.position.x += gene.x * 5;
       this.params.position.y += gene.y * 5;
+    }
+    if (this.params.position.x === targetPoint.x && this.params.position.y === targetPoint.y) {
+      console.log({ match: this });
+      this.fitnessValue += 1;
     }
   }
 
