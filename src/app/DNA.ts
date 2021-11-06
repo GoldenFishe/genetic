@@ -1,11 +1,11 @@
 export type Direction = 1 | 0 | -1;
 
-type Gene = {
+export type Gene = {
   x: Direction;
   y: Direction;
 };
 
-type Genes = Gene[];
+export type Genes = Gene[];
 
 export interface IDNA {
   genes: Genes;
@@ -14,8 +14,8 @@ export interface IDNA {
 export class DNA implements IDNA {
   genes: Genes;
 
-  constructor(length: number) {
-    this.genes = this.generateGenes(length);
+  constructor(length: number, genes?: Genes) {
+    this.genes = genes || this.generateGenes(length);
   }
 
   static generateGen(): Gene {

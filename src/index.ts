@@ -13,7 +13,7 @@ export function main() {
   const targetPoint = { x: 250, y: 50 };
   const bounds = { x: 0, y: 0, width: 500, height: 500 };
 
-  const population = new Population(20, 10, 500, targetPoint);
+  const population = new Population(100, 10, 200, targetPoint);
   const environment = new Environment(bounds, population);
   const painter = new Painter(environment, targetPoint);
 

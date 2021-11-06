@@ -35,7 +35,7 @@ export class Population implements IPopulation {
   }
 
   tick(day: number) {
-    this.members.forEach(member => !member.isDead && member.liveDay(day, this.targetPoint));
+    this.members.forEach(member => !member.isDead && !member.isReached && member.liveDay(day, this.targetPoint));
   }
 
   private selection() {
@@ -47,7 +47,7 @@ export class Population implements IPopulation {
       }
     }
     const maxFitnessValue = Math.max(...this.members.map(member => member.fitnessValue));
-
+    console.log({[this.generation]: maxFitnessValue});
     graphic.addPoint(this.generation, Number.parseFloat(maxFitnessValue.toFixed(4)))
 
     return matingPool;
@@ -55,7 +55,6 @@ export class Population implements IPopulation {
 
   private reproduce() {
     const matingPool = this.selection();
-    console.log(matingPool);
     for (let i = 0; i < this.members.length; i++) {
       const mummyIndex = getRandomInRange(0, matingPool.length);
       const daddyIndex = getRandomInRange(0, matingPool.length);
