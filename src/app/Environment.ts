@@ -40,7 +40,7 @@ export class Environment implements IEnvironment {
 
     private killMembers() {
         this.population.members.forEach(member => {
-            if (this.isOutOfBounds(member) || this.isCrashedByWall(member)) {
+            if (!member.isDead && (this.isOutOfBounds(member) || this.isCrashedByWall(member))) {
                 this.killMember(member)
             }
         });
@@ -58,13 +58,13 @@ export class Environment implements IEnvironment {
 
     private isOutOfBounds(member: IMember) {
         const {x, y} = member.params.position;
-        const outOfX = x < this.bounds.x || x > this.bounds.width;
-        const outOfY = y < this.bounds.y || y > this.bounds.height;
+        const outOfX = x < this.bounds.x || x > this.bounds.width - 10;
+        const outOfY = y < this.bounds.y || y > this.bounds.height - 10;
         return outOfX || outOfY;
     }
 
     private killMember(member: IMember) {
         member.isDead = true;
-        member.fitnessValue -= 1;
+        member.fitnessValue -= 0.5;
     }
 }

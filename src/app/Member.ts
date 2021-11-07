@@ -30,7 +30,6 @@ export class Member implements IMember {
     fitnessValue: number;
     isDead: boolean;
     isReached: boolean;
-    genes?: Genes;
     readonly params: Params;
     readonly DNA: IDNA;
     private readonly lifetime: number;
