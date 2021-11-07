@@ -10,7 +10,7 @@ export function main() {
   const targetPoint = { x: 250, y: 50 };
   const bounds = { x: 0, y: 0, width: 500, height: 500 };
 
-  const population = new Population(50, 10, 1500, targetPoint);
+  const population = new Population(50, 10, 1000, targetPoint);
   const environment = new Environment(bounds, population);
   const painter = new Painter(environment, targetPoint);
 

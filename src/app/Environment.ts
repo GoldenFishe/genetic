@@ -65,6 +65,6 @@ export class Environment implements IEnvironment {
 
     private killMember(member: IMember) {
         member.isDead = true;
-        member.fitnessValue -= 0.5;
+        member.fitnessValue -= 1;
     }
 }
