@@ -1,5 +1,5 @@
 const fs = require("fs/promises");
-const tf = require("@tensorflow/tfjs-node-gpu");
+const tf = require("@tensorflow/tfjs-node");
 
 async function getFilenames(type, dataType) {
   try {
@@ -12,7 +12,7 @@ async function getFilenames(type, dataType) {
 async function getFile(type, filename, dataType) {
   try {
     const file = await fs.readFile(`${__dirname}/data/${dataType}/${type}/${filename}`);
-    const pixelData = {width: 300, height: 300, data: file};
+    const pixelData = { width: 300, height: 300, data: file };
     return tf.browser.fromPixels(pixelData);
   } catch (err) {
     console.error(err);
@@ -26,7 +26,7 @@ async function getData(type, dataType) {
     const file = await getFile(type, filename, dataType);
     data.push(file);
   }
-  return tf.data.array(data);
+  return data;
 }
 
 async function getLabels(size, label) {
@@ -34,39 +34,41 @@ async function getLabels(size, label) {
   for (let i = 0; i < size; i++) {
     labels.push(tf.tensor(label));
   }
-  return tf.data.array(labels);
+  return labels;
 }
 
 async function getTrainDataset() {
-  const paperData = await getData('paper', 'train');
-  const rockData = await getData('rock', 'train');
-  const scissorsData = await getData('scissors', 'train');
+  const paperData = await getData("paper", "train");
+  const rockData = await getData("rock", "train");
+  const scissorsData = await getData("scissors", "train");
 
-  const paperLabels = await getLabels(paperData.size, 1);
-  const rockLabels = await getLabels(rockData.size, 2);
-  const scissorsLabels = await getLabels(scissorsData.size, 3);
+  const paperLabels = await getLabels(paperData.length, 1);
+  const rockLabels = await getLabels(rockData.length, 2);
+  const scissorsLabels = await getLabels(scissorsData.length, 3);
 
-  const data = paperData.concatenate(rockData).concatenate(scissorsData).map(item => {
-    return item.div(255);
-  });
-  const labels = paperLabels.concatenate(rockLabels).concatenate(scissorsLabels);
-  const dataset = tf.data.zip({xs: data, ys: labels}).batch(1);
-  console.log(dataset.size);
-  return dataset
+  // const data = paperData.concatenate(rockData).concatenate(scissorsData).map(item => {
+  //   return item.div(255);
+  // });
+  // const labels = paperLabels.concatenate(rockLabels).concatenate(scissorsLabels);
+  // const dataset = tf.data.zip({ xs: data, ys: labels });
+  // console.log(dataset.size);
+  // return dataset;
+  return { xs: [...paperData, ...rockData, ...scissorsData], ys: [...paperLabels, ...rockLabels, ...scissorsLabels] };
 }
 
 async function getTestDataset() {
-  const paperData = await getData('paper', 'test');
-  const rockData = await getData('rock', 'test');
-  const scissorsData = await getData('scissors', 'test');
+  const paperData = await getData("paper", "test");
+  const rockData = await getData("rock", "test");
+  const scissorsData = await getData("scissors", "test");
 
-  const paperLabels = await getLabels(paperData.size, 1);
-  const rockLabels = await getLabels(rockData.size, 2);
-  const scissorsLabels = await getLabels(scissorsData.size, 3);
+  const paperLabels = await getLabels(paperData.length, 1);
+  const rockLabels = await getLabels(rockData.length, 2);
+  const scissorsLabels = await getLabels(scissorsData.length, 3);
 
-  const data = paperData.concatenate(rockData).concatenate(scissorsData);
-  const labels = paperLabels.concatenate(rockLabels).concatenate(scissorsLabels);
-  return tf.data.zip({xs: data, ys: labels})
+  // const data = paperData.concatenate(rockData).concatenate(scissorsData);
+  // const labels = paperLabels.concatenate(rockLabels).concatenate(scissorsLabels);
+  // return tf.data.zip({ xs: data, ys: labels });
+  return { xs: [...paperData, ...rockData, ...scissorsData], ys: [...paperLabels, ...rockLabels, ...scissorsLabels] };
 }
 
 module.exports = {
