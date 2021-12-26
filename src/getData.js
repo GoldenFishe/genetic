@@ -1,7 +1,5 @@
 const fs = require("fs/promises");
-const tf = require("@tensorflow/tfjs");
-
-const SHUFFLE = 10;
+const tf = require("@tensorflow/tfjs-node-gpu");
 
 async function getFilenames(type, dataType) {
   try {
@@ -52,8 +50,9 @@ async function getTrainDataset() {
     return item.div(255);
   });
   const labels = paperLabels.concatenate(rockLabels).concatenate(scissorsLabels);
-
-  return tf.data.zip({xs: data, ys: labels}).batch(3);
+  const dataset = tf.data.zip({xs: data, ys: labels}).batch(1);
+  console.log(dataset.size);
+  return dataset
 }
 
 async function getTestDataset() {
@@ -67,8 +66,7 @@ async function getTestDataset() {
 
   const data = paperData.concatenate(rockData).concatenate(scissorsData);
   const labels = paperLabels.concatenate(rockLabels).concatenate(scissorsLabels);
-
-  return tf.data.zip({xs: data, ys: labels}).batch(3)
+  return tf.data.zip({xs: data, ys: labels})
 }
 
 module.exports = {
